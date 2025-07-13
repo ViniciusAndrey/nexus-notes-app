@@ -73,15 +73,17 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({ value, onChange }) => {
         autoFocus
         onFocus={() => (value[0] as any)?.children?.[0]?.text || ''}
         style={{
-          minHeight: '200px',
-          background: 'transparent', // sem fundo extra
-          color: '#f5f5f7', // tom claro para contraste
-          border: 'none', // sem borda
-          borderRadius: 0, // sem arredondamento
-          padding: '0.5rem',
+          flex: 1,
+          background: 'transparent',
+          color: '#ffffff',
+          border: 'none',
+          borderRadius: 0,
+          padding: 0,
           fontSize: '1.1rem',
-          lineHeight: 1.7,
+          lineHeight: 1.8,
           outline: 'none',
+          resize: 'none',
+          fontFamily: 'Roboto, Open Sans, Arial, sans-serif',
         }}
       />
     </Slate>

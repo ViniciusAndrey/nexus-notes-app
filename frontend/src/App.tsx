@@ -15,39 +15,65 @@ interface Note {
   updatedAt: number;
 }
 
-const Background = styled.div`
+const Layout = styled.div`
   min-height: 100vh;
   width: 100vw;
-  background: ${({ theme }) => theme.background};
+  background: #1a1a1a;
   display: flex;
   align-items: stretch;
-  justify-content: center;
+  justify-content: flex-start;
+  font-family: 'Roboto', 'Open Sans', Arial, sans-serif;
 `;
 
 const Sidebar = styled.aside`
-  width: 320px;
-  background: ${({ theme }) => theme.surface};
-  border-right: 1px solid ${({ theme }) => theme.border};
-  padding: 2rem 0.5rem 2rem 0.5rem;
+  width: 22vw;
+  min-width: 220px;
+  max-width: 320px;
+  background: #2d2d2d;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  overflow-y: auto;
+  align-items: stretch;
+  border-right: 1px solid #404040;
+  padding: 2rem 0.5rem 2rem 0.5rem;
+  gap: 2rem;
 `;
 
-const NoteBlock = styled.div`
-  background: ${({ theme }) => theme.surface};
-  border-radius: 24px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
-  padding: 3rem 2.5rem;
-  min-width: 350px;
-  max-width: 700px;
-  width: 90vw;
-  min-height: 60vh;
-  margin: auto;
+const SidebarTop = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  gap: 1.5rem;
+`;
+
+const SidebarBottom = styled.div`
+  margin-top: auto;
+  display: flex;
+  justify-content: flex-end;
+`;
+
+const IconButton = styled.button`
+  background: none;
+  border: none;
+  color: #b0b0b0;
+  font-size: 1.6rem;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  align-self: flex-start;
+  transition: color 0.2s;
+  &:hover {
+    color: #ffffff;
+  }
+`;
+
+const EditorContainer = styled.div`
+  flex: 1;
+  background: #1a1a1a;
+  padding: 3rem 4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 0;
+  height: 100vh;
+  overflow-y: auto;
 `;
 
 const NewNoteButton = styled.button`
@@ -143,19 +169,21 @@ const App: React.FC = () => {
   return (
     <ThemeProvider theme={darkTheme}>
       <GlobalStyle theme={darkTheme} />
-      <Background>
+      <Layout>
         <Sidebar>
-          <NewNoteButton onClick={handleNew}>+ Nova Nota</NewNoteButton>
-          <NoteList notes={orderedNotes} onSelect={handleSelect} selectedId={selectedId ?? undefined} />
+          <SidebarTop>
+            <NewNoteButton onClick={handleNew}>+ Nova Nota</NewNoteButton>
+            <NoteList notes={orderedNotes} onSelect={handleSelect} selectedId={selectedId ?? undefined} />
+          </SidebarTop>
         </Sidebar>
-        <NoteBlock>
+        <EditorContainer>
           <NoteEditor
             note={selectedNote}
             onSave={handleSave}
             onDelete={handleDelete}
           />
-        </NoteBlock>
-      </Background>
+        </EditorContainer>
+      </Layout>
     </ThemeProvider>
   );
 };

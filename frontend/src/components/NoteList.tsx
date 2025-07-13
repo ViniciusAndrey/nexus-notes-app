@@ -20,14 +20,14 @@ const List = styled.ul`
 const ListItem = styled.li<{ selected: boolean }>`
   padding: 0.7rem 1rem;
   border-radius: 8px;
-  background: ${({ selected }) => (selected ? '#eaf1ff' : 'transparent')};
-  color: #f5f5f7;
+  background: ${({ selected }) => (selected ? '#404040' : 'transparent')};
+  color: #ffffff;
   font-weight: 500;
   cursor: pointer;
   margin-bottom: 0.2rem;
   transition: background 0.2s;
   &:hover {
-    background: #f0f4fa;
+    background: #333333;
   }
 `;
 
