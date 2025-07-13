@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useEffect } from 'react';
 import { createEditor, Descendant, BaseEditor, Editor, Transforms, Text, Element as SlateElement } from 'slate';
 import { Slate, Editable, withReact, ReactEditor, useSlate } from 'slate-react';
 import { withHistory } from 'slate-history';
@@ -43,10 +43,18 @@ export const initialValue: Descendant[] = [
   },
 ];
 
-const RichTextEditor: React.FC<RichTextEditorProps> = ({ value, onChange }) => {
+const RichTextEditor: React.FC<RichTextEditorProps> = ({ value, onChange }) => {  
   const editor = useMemo(() => withHistory(withReact(createEditor())), []);
   const renderElement = useCallback((props: any) => <Element {...props} />, []);
   const renderLeaf = useCallback((props: any) => <Leaf {...props} />, []);
+
+  // Forçar atualização do editor quando o valor muda
+  useEffect(() => {
+    if (editor && value) {
+      editor.children = value;
+      editor.onChange();
+    }
+  }, [editor, value]);
 
   return (
     <Slate editor={editor} initialValue={value} onChange={onChange}>
@@ -63,6 +71,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({ value, onChange }) => {
         placeholder="Escreva sua anotação..."
         spellCheck
         autoFocus
+        onFocus={() => (value[0] as any)?.children?.[0]?.text || ''}
         style={{
           minHeight: '200px',
           background: 'transparent', // sem fundo extra

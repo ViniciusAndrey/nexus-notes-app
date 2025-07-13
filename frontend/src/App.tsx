@@ -106,25 +106,25 @@ const App: React.FC = () => {
     }
   };
 
-  const handleDelete = () => {
-    setNotes(prev => {
-      const idx = prev.findIndex(n => n.id === selectedId);
-      const newNotes = prev.filter(n => n.id !== selectedId);
-      if (newNotes.length > 0) {
-        setSelectedId(newNotes[Math.max(0, idx - 1)].id);
-      } else {
-        // Se não houver mais notas, cria uma nova em branco
-        const newNote = {
-          id: crypto.randomUUID(),
-          title: '',
-          content: JSON.parse(JSON.stringify(richInitialValue)),
-          updatedAt: Date.now(),
-        };
-        setSelectedId(newNote.id);
-        return [newNote];
-      }
-      return newNotes;
-    });
+  const handleDelete = async () => {
+    if (!selectedNote) return;
+    
+    try {
+      await apiDeleteNote(selectedNote.id);
+      setNotes(prev => {
+        const idx = prev.findIndex(n => n.id === selectedNote.id);
+        const newNotes = prev.filter(n => n.id !== selectedNote.id);
+        if (newNotes.length > 0) {
+          setSelectedId(newNotes[Math.max(0, idx - 1)].id);
+        } else {
+          setSelectedId(null);
+        }
+        return newNotes;
+      });
+    } catch (error) {
+      console.error('Erro ao deletar nota:', error);
+      // Aqui você pode adicionar uma notificação de erro para o usuário
+    }
   };
 
   const handleNew = async () => {

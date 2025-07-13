@@ -65,18 +65,19 @@ const isValidSlateContent = (content: any): content is Descendant[] => {
 };
 
 const NoteEditor: React.FC<NoteEditorProps> = ({ note, onSave, onDelete }) => {
+  
   const [title, setTitle] = useState(note?.title || '');
   const [content, setContent] = useState<Descendant[]>(
     isValidSlateContent(note?.content)
       ? JSON.parse(JSON.stringify(note?.content))
       : JSON.parse(JSON.stringify(richInitialValue))
   );
-  console.log(content)
 
   useEffect(() => {
     setTitle(note?.title || '');
     if (note && isValidSlateContent(note.content)) {
-      setContent(JSON.parse(JSON.stringify(note.content)));
+      const newContent = JSON.parse(JSON.stringify(note.content));
+      setContent(newContent);
     } else {
       setContent(JSON.parse(JSON.stringify(richInitialValue)));
     }
@@ -93,7 +94,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ note, onSave, onDelete }) => {
         value={title}
         onChange={e => setTitle(e.target.value)}
       />
-      <RichTextEditor key={note?.id} value={content} onChange={setContent} />
+      <RichTextEditor value={content} onChange={setContent} />
       <ButtonRow>
         <EmojiButton type="button" onClick={handleSave}>
           Salvar
