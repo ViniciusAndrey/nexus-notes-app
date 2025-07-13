@@ -37,7 +37,6 @@ jspm_packages/
 .env.test
 .env.local
 .env.production
-.package-lock
 
 # Logs
 logs
