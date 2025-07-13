@@ -155,7 +155,7 @@ const App: React.FC = () => {
 
   const handleNew = async () => {
     const created = await createNote({
-      title: '',
+      title: 'Nova Nota',
       content: JSON.parse(JSON.stringify(richInitialValue)),
       updatedAt: Date.now(),
     });

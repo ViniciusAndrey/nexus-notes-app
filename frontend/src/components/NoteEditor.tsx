@@ -130,7 +130,9 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ note, onSave, onDelete }) => {
   }, [note]);
 
   const handleSave = () => {
-    onSave({ title, content });
+    // Garantir que o título não seja vazio
+    const validTitle = title.trim() !== '' ? title.trim() : 'Nova Nota';
+    onSave({ title: validTitle, content });
   };
 
   return (
