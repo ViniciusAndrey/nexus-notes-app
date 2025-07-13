@@ -16,12 +16,20 @@ const Container = styled.div`
   height: 100%;
   gap: 2rem;
   
+  @media (max-width: 1024px) {
+    gap: 1.8rem;
+  }
+  
   @media (max-width: 768px) {
     gap: 1.5rem;
   }
   
   @media (max-width: 480px) {
     gap: 1rem;
+  }
+  
+  @media (max-width: 360px) {
+    gap: 0.8rem;
   }
 `;
 
@@ -41,12 +49,20 @@ const TitleInput = styled.input`
     font-weight: 400;
   }
   
+  @media (max-width: 1024px) {
+    font-size: 2.2rem;
+  }
+  
   @media (max-width: 768px) {
     font-size: 2rem;
   }
   
   @media (max-width: 480px) {
     font-size: 1.5rem;
+  }
+  
+  @media (max-width: 360px) {
+    font-size: 1.3rem;
   }
 `;
 
@@ -62,6 +78,11 @@ const ButtonRow = styled.div`
   margin-top: auto;
   padding-top: 2rem;
   
+  @media (max-width: 1024px) {
+    gap: 0.9rem;
+    padding-top: 1.8rem;
+  }
+  
   @media (max-width: 768px) {
     gap: 0.8rem;
     padding-top: 1.5rem;
@@ -71,6 +92,11 @@ const ButtonRow = styled.div`
     gap: 0.6rem;
     padding-top: 1rem;
     flex-direction: column;
+  }
+  
+  @media (max-width: 360px) {
+    gap: 0.5rem;
+    padding-top: 0.8rem;
   }
 `;
 

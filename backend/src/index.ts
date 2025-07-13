@@ -10,13 +10,38 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Configuração CORS para produção
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  credentials: true
-}));
+// Configuração CORS melhorada
+const corsOptions = {
+  origin: function (origin: string | undefined, callback: Function) {
+    // Permitir requisições sem origin (como mobile apps ou Postman)
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'http://127.0.0.1:3000',
+      'http://localhost:3001',
+      'http://127.0.0.1:3001'
+    ];
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Não permitido pelo CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json());
+
+// Middleware para log de requisições (removido para limpar terminal)
+app.use((req, res, next) => {
+  next();
+});
 
 // Rota raiz para teste
 app.get('/', (req, res) => {
@@ -41,10 +66,10 @@ const connectDB = async () => {
   try {
     const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/nexus';
     await mongoose.connect(mongoURI);
-    console.log('✅ Conectado ao MongoDB');
+    console.log('✅ Conectado ao MongoDB com sucesso!');
   } catch (error) {
     console.error('❌ Erro ao conectar ao MongoDB:', error);
-    process.exit(1);
+    console.log('⚠️  Servidor iniciando sem conexão com MongoDB');
   }
 };
 
@@ -53,7 +78,6 @@ const startServer = async () => {
   await connectDB();
   app.listen(PORT, () => {
     console.log(`🚀 Servidor rodando na porta ${PORT}`);
-    console.log(`📱 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
   });
 };
 

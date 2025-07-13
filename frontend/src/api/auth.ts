@@ -53,41 +53,73 @@ export const getAuthHeaders = () => {
 };
 
 export const login = async (data: LoginData): Promise<AuthResponse> => {
-  const response = await fetch(`${API_BASE_URL}/users/login`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  });
+  const url = `${API_BASE_URL}/users/login`;
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Erro no login');
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      
+      let errorMessage = 'Erro no login';
+      try {
+        const errorJson = JSON.parse(errorText);
+        errorMessage = errorJson.message || errorMessage;
+      } catch (e) {
+        console.error('❌ Erro ao parsear JSON:', e);
+      }
+      
+      throw new Error(errorMessage);
+    }
+
+    const result = await response.json();
+    saveToken(result.token);
+    return result;
+  } catch (error) {
+    console.error('❌ Erro no login:', error);
+    throw error;
   }
-
-  const result = await response.json();
-  saveToken(result.token);
-  return result;
 };
 
 export const register = async (data: RegisterData): Promise<AuthResponse> => {
-  const response = await fetch(`${API_BASE_URL}/users/register`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  });
+  const url = `${API_BASE_URL}/users/register`;
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Erro no registro');
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      
+      let errorMessage = 'Erro no registro';
+      try {
+        const errorJson = JSON.parse(errorText);
+        errorMessage = errorJson.message || errorMessage;
+      } catch (e) {
+        console.error('❌ Erro ao parsear JSON:', e);
+      }
+      
+      throw new Error(errorMessage);
+    }
+
+    const result = await response.json();
+    saveToken(result.token);
+    return result;
+  } catch (error) {
+    console.error('❌ Erro no registro:', error);
+    throw error;
   }
-
-  const result = await response.json();
-  saveToken(result.token);
-  return result;
 };
 
 export const logout = () => {
@@ -95,13 +127,21 @@ export const logout = () => {
 };
 
 export const getProfile = async (): Promise<{ user: User }> => {
-  const response = await fetch(`${API_BASE_URL}/users/profile`, {
-    headers: getAuthHeaders(),
-  });
+  const url = `${API_BASE_URL}/users/profile`;
 
-  if (!response.ok) {
-    throw new Error('Erro ao buscar perfil');
+  try {
+    const response = await fetch(url, {
+      headers: getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error('Erro ao buscar perfil');
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error('❌ Erro ao buscar perfil:', error);
+    throw error;
   }
-
-  return response.json();
 }; 

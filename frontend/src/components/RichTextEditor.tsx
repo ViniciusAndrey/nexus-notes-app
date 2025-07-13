@@ -33,23 +33,48 @@ const Toolbar = styled.div`
 `;
 
 const Button = styled.button<{ active?: boolean }>`
-  background: ${({ active, theme }) => (active ? theme.accent : theme.surface)};
-  color: ${({ theme }) => theme.text};
-  border: 1px solid ${({ theme }) => theme.border};
-  border-radius: 4px;
-  padding: 0.3rem 0.6rem;
+  background: ${({ active }) => 
+    active 
+      ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' 
+      : 'linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%)'
+  };
+  color: ${({ active }) => active ? '#ffffff' : '#b0b0b0'};
+  border: 1px solid ${({ active }) => active ? '#667eea' : '#404040'};
+  border-radius: 8px;
+  padding: 0.4rem 0.8rem;
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 600;
   font-size: 0.9rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: ${({ active }) => 
+    active 
+      ? '0 4px 15px rgba(102, 126, 234, 0.3)' 
+      : '0 2px 8px rgba(0, 0, 0, 0.2)'
+  };
+  
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: ${({ active }) => 
+      active 
+        ? '0 6px 20px rgba(102, 126, 234, 0.4)' 
+        : '0 4px 12px rgba(0, 0, 0, 0.3)'
+    };
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
   
   @media (max-width: 768px) {
-    padding: 0.25rem 0.5rem;
+    padding: 0.3rem 0.6rem;
     font-size: 0.85rem;
+    border-radius: 6px;
   }
   
   @media (max-width: 480px) {
-    padding: 0.2rem 0.4rem;
+    padding: 0.25rem 0.5rem;
     font-size: 0.8rem;
+    border-radius: 5px;
   }
 `;
 
@@ -66,6 +91,11 @@ const EditableContainer = styled.div`
   resize: none;
   font-family: 'Roboto', 'Open Sans', Arial, sans-serif;
   
+  @media (max-width: 1024px) {
+    font-size: 1.05rem;
+    line-height: 1.7;
+  }
+  
   @media (max-width: 768px) {
     font-size: 1rem;
     line-height: 1.6;
@@ -76,11 +106,21 @@ const EditableContainer = styled.div`
     line-height: 1.5;
   }
   
+  @media (max-width: 360px) {
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+  
   /* Estilos para elementos do editor */
   h1 {
     font-size: 1.8rem;
     font-weight: 700;
     margin: 1rem 0 0.5rem 0;
+    
+    @media (max-width: 1024px) {
+      font-size: 1.7rem;
+      margin: 0.9rem 0 0.45rem 0;
+    }
     
     @media (max-width: 768px) {
       font-size: 1.6rem;
@@ -90,6 +130,11 @@ const EditableContainer = styled.div`
     @media (max-width: 480px) {
       font-size: 1.4rem;
       margin: 0.6rem 0 0.3rem 0;
+    }
+    
+    @media (max-width: 360px) {
+      font-size: 1.2rem;
+      margin: 0.5rem 0 0.25rem 0;
     }
   }
   

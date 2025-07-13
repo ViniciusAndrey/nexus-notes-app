@@ -15,6 +15,11 @@ export const register = async (req: Request, res: Response) => {
   try {
     const { name, email, password } = req.body;
 
+    // Validação básica
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: 'Todos os campos são obrigatórios' });
+    }
+
     // Verificar se o usuário já existe
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -43,7 +48,7 @@ export const register = async (req: Request, res: Response) => {
       }
     });
   } catch (error) {
-    console.error('Erro no registro:', error);
+    console.error('❌ Erro no registro:', error);
     res.status(500).json({ message: 'Erro interno do servidor' });
   }
 };
@@ -51,6 +56,11 @@ export const register = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
+
+    // Validação básica
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email e senha são obrigatórios' });
+    }
 
     // Buscar usuário
     const user = await User.findOne({ email });
@@ -77,7 +87,7 @@ export const login = async (req: Request, res: Response) => {
       }
     });
   } catch (error) {
-    console.error('Erro no login:', error);
+    console.error('❌ Erro no login:', error);
     res.status(500).json({ message: 'Erro interno do servidor' });
   }
 };
@@ -96,7 +106,7 @@ export const getProfile = async (req: Request, res: Response) => {
       }
     });
   } catch (error) {
-    console.error('Erro ao buscar perfil:', error);
+    console.error('❌ Erro ao buscar perfil:', error);
     res.status(500).json({ message: 'Erro interno do servidor' });
   }
 }; 

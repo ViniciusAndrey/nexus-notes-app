@@ -1,115 +1,136 @@
 # Nexus - Sistema de Anotações
 
-Um micro SaaS de anotações com autenticação completa e isolamento de dados por usuário.
+Um micro SaaS de anotações com sistema completo de autenticação, isolamento de dados por usuário e interface responsiva.
 
-## 🚀 Funcionalidades
-
-- ✅ **Autenticação Completa**: Registro e login de usuários
-- ✅ **Isolamento de Dados**: Cada usuário vê apenas suas próprias notas
-- ✅ **Editor Rico**: Interface moderna para criar e editar notas
-- ✅ **Interface Responsiva**: Design adaptável para diferentes dispositivos
-- ✅ **Tema Escuro**: Interface elegante com tema escuro
-- ✅ **Persistência**: Dados salvos no MongoDB
-- ✅ **Segurança**: Senhas hasheadas e tokens JWT
-
-## 🛠️ Tecnologias
+## 🚀 Tecnologias
 
 ### Backend
-- **Node.js** com TypeScript
-- **Express.js** para API REST
+- **Node.js** com Express
+- **TypeScript**
 - **MongoDB** com Mongoose
 - **JWT** para autenticação
-- **bcrypt** para hash de senhas
+- **bcryptjs** para criptografia de senhas
 
 ### Frontend
 - **React** com TypeScript
 - **Styled Components** para estilização
 - **Slate.js** para editor de texto rico
+- **Axios** para requisições HTTP
+- **Design responsivo** para mobile
 
-## 📦 Instalação
+## 📋 Pré-requisitos
 
-### Pré-requisitos
 - Node.js (versão 16 ou superior)
-- MongoDB (local ou Atlas)
+- MongoDB (local ou MongoDB Atlas)
+- npm ou yarn
 
-### 1. Clone o repositório
+## 🛠️ Instalação
+
+1. **Clone o repositório:**
 ```bash
 git clone <url-do-repositorio>
 cd Nexus
 ```
 
-### 2. Configure o Backend
+2. **Instale todas as dependências:**
 ```bash
-cd backend
-npm install
+npm run install:all
 ```
 
-Crie um arquivo `.env` na pasta `backend` com:
+3. **Configure as variáveis de ambiente:**
+
+Crie um arquivo `.env` na pasta `backend/`:
 ```env
-PORT=3001
 MONGODB_URI=mongodb://localhost:27017/nexus
+JWT_SECRET=sua_chave_secreta_aqui
+PORT=3001
 FRONTEND_URL=http://localhost:3000
-JWT_SECRET=sua_chave_secreta_muito_segura_aqui
 ```
 
-### 3. Configure o Frontend
+## 🚀 Executando o Projeto
+
+### Opção 1: Executar tudo de uma vez (Recomendado)
 ```bash
-cd ../frontend
-npm install
+npm run dev
 ```
 
-### 4. Execute o Projeto
+### Opção 2: Executar separadamente
 
 **Backend:**
 ```bash
-cd backend
-npm run dev
+npm run dev:backend
 ```
 
 **Frontend:**
 ```bash
-cd frontend
-npm start
+npm run dev:frontend
 ```
 
-## 🔐 Segurança Implementada
+## 📱 Acessando a Aplicação
 
-### Problema Resolvido
-- **Antes**: Todas as notas eram compartilhadas globalmente
-- **Depois**: Cada usuário tem acesso apenas às suas próprias notas
+- **Frontend:** http://localhost:3000
+- **Backend API:** http://localhost:3001
+- **Health Check:** http://localhost:3001/health
 
-### Medidas de Segurança
-- ✅ Autenticação JWT obrigatória
-- ✅ Senhas hasheadas com bcrypt
-- ✅ Validação de dados de entrada
-- ✅ Isolamento completo de dados por usuário
-- ✅ Tokens com expiração automática
-- ✅ Middleware de autenticação em todas as rotas protegidas
+## 🔧 Scripts Disponíveis
 
-## 📱 Como Usar
+- `npm run dev` - Executa backend e frontend simultaneamente
+- `npm run dev:backend` - Executa apenas o backend
+- `npm run dev:frontend` - Executa apenas o frontend
+- `npm run install:all` - Instala todas as dependências
 
-1. **Registre-se** ou **faça login** na aplicação
-2. **Crie notas** usando o botão "+ Nova Nota"
-3. **Edite** suas notas no editor rico
-4. **Organize** suas notas na sidebar
-5. **Suas notas são privadas** - apenas você pode vê-las
+## 🗄️ Estrutura do Banco de Dados
 
-## 🚀 Deploy
+### Usuários
+- `_id`: ID único do usuário
+- `name`: Nome completo
+- `email`: Email único
+- `password`: Senha criptografada
+- `createdAt`: Data de criação
+- `updatedAt`: Data de atualização
 
-### Backend
-- Configure as variáveis de ambiente para produção
-- Use um MongoDB Atlas ou servidor MongoDB
-- Altere a `JWT_SECRET` para uma chave segura
-- Configure CORS para o domínio do frontend
+### Notas
+- `_id`: ID único da nota
+- `title`: Título da nota
+- `content`: Conteúdo da nota
+- `userId`: ID do usuário proprietário
+- `createdAt`: Data de criação
+- `updatedAt`: Data de atualização
 
-### Frontend
-- Configure a variável `REACT_APP_API_URL` para a URL do backend
-- Build para produção: `npm run build`
+## 🔐 Autenticação
+
+O sistema utiliza JWT (JSON Web Tokens) para autenticação:
+
+1. **Registro:** Cria uma nova conta
+2. **Login:** Autentica com email e senha
+3. **Token:** Armazenado no localStorage
+4. **Middleware:** Protege rotas privadas
+
+## 📱 Funcionalidades
+
+### Para Usuários
+- ✅ Registro e login
+- ✅ Criação de notas privadas
+- ✅ Editor de texto rico
+- ✅ Interface responsiva
+- ✅ Logout seguro
+
+### Para Desenvolvedores
+- ✅ API RESTful documentada
+- ✅ CORS configurado
+- ✅ Logs limpos (apenas erros)
+- ✅ TypeScript em todo o projeto
+- ✅ Estrutura modular
+
+## 🐛 Debug
+
+Se encontrar problemas:
+
+1. **Verifique se o MongoDB está rodando**
+2. **Confirme as variáveis de ambiente**
+3. **Verifique os logs no console do navegador**
+4. **Teste a API diretamente:** http://localhost:3001/health
 
 ## 📄 Licença
 
-Este projeto está sob a licença MIT.
-
-## 🤝 Contribuição
-
-Contribuições são bem-vindas! Por favor, abra uma issue ou pull request. 
+Este projeto está sob a licença ISC. 

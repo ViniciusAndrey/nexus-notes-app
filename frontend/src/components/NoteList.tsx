@@ -16,8 +16,16 @@ const List = styled.ul`
   flex-direction: column;
   gap: 0.2rem;
   
+  @media (max-width: 1024px) {
+    gap: 0.15rem;
+  }
+  
   @media (max-width: 768px) {
     gap: 0.1rem;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 0.08rem;
   }
 `;
 
@@ -29,12 +37,18 @@ const ListItem = styled.li<{ selected: boolean }>`
   font-weight: 500;
   cursor: pointer;
   margin-bottom: 0.2rem;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
   font-size: 0.9rem;
   line-height: 1.3;
   
   &:hover {
     background: #333333;
+    transform: translateX(2px);
+  }
+  
+  @media (max-width: 1024px) {
+    padding: 0.65rem 0.9rem;
+    font-size: 0.88rem;
   }
   
   @media (max-width: 768px) {
@@ -46,6 +60,11 @@ const ListItem = styled.li<{ selected: boolean }>`
   @media (max-width: 480px) {
     padding: 0.5rem 0.7rem;
     font-size: 0.8rem;
+  }
+  
+  @media (max-width: 360px) {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.75rem;
   }
 `;
 
