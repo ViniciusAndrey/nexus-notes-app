@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import { User } from './users.model';
+import { User, IUser } from './users.model';
 
 // Gerar token JWT
 const generateToken = (userId: string) => {
@@ -31,13 +31,13 @@ export const register = async (req: Request, res: Response) => {
     await user.save();
 
     // Gerar token
-    const token = generateToken(user._id.toString());
+    const token = generateToken((user._id as any).toString());
 
     res.status(201).json({
       message: 'Usuário criado com sucesso',
       token,
       user: {
-        id: user._id,
+        id: (user._id as any).toString(),
         name: user.name,
         email: user.email
       }
@@ -65,13 +65,13 @@ export const login = async (req: Request, res: Response) => {
     }
 
     // Gerar token
-    const token = generateToken(user._id.toString());
+    const token = generateToken((user._id as any).toString());
 
     res.json({
       message: 'Login realizado com sucesso',
       token,
       user: {
-        id: user._id,
+        id: (user._id as any).toString(),
         name: user.name,
         email: user.email
       }
@@ -84,9 +84,13 @@ export const login = async (req: Request, res: Response) => {
 
 export const getProfile = async (req: Request, res: Response) => {
   try {
+    if (!req.user) {
+      return res.status(401).json({ message: 'Usuário não autenticado' });
+    }
+    
     res.json({
       user: {
-        id: req.user._id,
+        id: (req.user._id as any).toString(),
         name: req.user.name,
         email: req.user.email
       }

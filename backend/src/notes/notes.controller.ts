@@ -1,14 +1,18 @@
 import { Request, Response } from 'express';
-import { Note } from './notes.model';
+import { Note, INote } from './notes.model';
 
 export const getNotes = async (req: Request, res: Response) => {
   try {
+    if (!req.user) {
+      return res.status(401).json({ message: 'Usuário não autenticado' });
+    }
+    
     // Filtrar notas apenas do usuário autenticado
     const notes = await Note.find({ userId: req.user._id }).sort({ updatedAt: -1 });
-    const simpleNotes = notes.map(({ _id, title, content }) => ({ 
-      id: (_id as any).toString(), 
-      title, 
-      content 
+    const simpleNotes = notes.map((note) => ({ 
+      id: (note._id as any).toString(), 
+      title: note.title, 
+      content: note.content 
     }));
     res.json(simpleNotes);
   } catch (error) {
@@ -19,6 +23,10 @@ export const getNotes = async (req: Request, res: Response) => {
 
 export const createNote = async (req: Request, res: Response) => {
   try {
+    if (!req.user) {
+      return res.status(401).json({ message: 'Usuário não autenticado' });
+    }
+
     const { title, content } = req.body;
     
     // Garantir que o título não seja vazio
@@ -44,6 +52,10 @@ export const createNote = async (req: Request, res: Response) => {
 
 export const updateNote = async (req: Request, res: Response) => {
   try {
+    if (!req.user) {
+      return res.status(401).json({ message: 'Usuário não autenticado' });
+    }
+
     const { id } = req.params;
     const { title, content } = req.body;
     
@@ -71,6 +83,10 @@ export const updateNote = async (req: Request, res: Response) => {
 
 export const deleteNote = async (req: Request, res: Response) => {
   try {
+    if (!req.user) {
+      return res.status(401).json({ message: 'Usuário não autenticado' });
+    }
+
     const { id } = req.params;
     
     // Verificar se a nota pertence ao usuário autenticado
