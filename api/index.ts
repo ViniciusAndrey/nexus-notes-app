@@ -2,12 +2,11 @@ import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import notesRoutes from './notes/notes.routes';
+import notesRoutes from '../backend/src/notes/notes.routes';
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
 
 // Configuração CORS para produção
 app.use(cors({
@@ -42,17 +41,11 @@ const connectDB = async () => {
     console.log('✅ Conectado ao MongoDB');
   } catch (error) {
     console.error('❌ Erro ao conectar ao MongoDB:', error);
-    process.exit(1);
   }
 };
 
-// Iniciar servidor
-const startServer = async () => {
-  await connectDB();
-  app.listen(PORT, () => {
-    console.log(`🚀 Servidor rodando na porta ${PORT}`);
-    console.log(`📱 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
-  });
-};
+// Conectar ao banco quando a função for chamada
+connectDB();
 
-startServer();
+// Exportar para Vercel
+export default app; 
