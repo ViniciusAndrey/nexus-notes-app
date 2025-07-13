@@ -15,6 +15,10 @@ const List = styled.ul`
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
+  
+  @media (max-width: 768px) {
+    gap: 0.1rem;
+  }
 `;
 
 const ListItem = styled.li<{ selected: boolean }>`
@@ -26,23 +30,65 @@ const ListItem = styled.li<{ selected: boolean }>`
   cursor: pointer;
   margin-bottom: 0.2rem;
   transition: background 0.2s;
+  font-size: 0.9rem;
+  line-height: 1.3;
+  
   &:hover {
     background: #333333;
   }
+  
+  @media (max-width: 768px) {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.85rem;
+    margin-bottom: 0.1rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0.5rem 0.7rem;
+    font-size: 0.8rem;
+  }
 `;
 
-const NoteList: React.FC<NoteListProps> = ({ notes, onSelect, selectedId }) => (
-  <List>
-    {notes.map(note => (
-      <ListItem
-        key={note.id}
-        selected={note.id === selectedId}
-        onClick={() => onSelect(note)}
-      >
-        {note.title || <em style={{ color: '#bbb' }}>Sem título</em>}
-      </ListItem>
-    ))}
-  </List>
-);
+const EmptyState = styled.div`
+  text-align: center;
+  color: #b0b0b0;
+  padding: 2rem 1rem;
+  font-size: 0.9rem;
+  
+  @media (max-width: 768px) {
+    padding: 1.5rem 0.5rem;
+    font-size: 0.85rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 1rem 0.3rem;
+    font-size: 0.8rem;
+  }
+`;
+
+const NoteList: React.FC<NoteListProps> = ({ notes, onSelect, selectedId }) => {
+  if (notes.length === 0) {
+    return (
+      <EmptyState>
+        Nenhuma nota encontrada.<br />
+        Crie sua primeira nota!
+      </EmptyState>
+    );
+  }
+
+  return (
+    <List>
+      {notes.map(note => (
+        <ListItem
+          key={note.id}
+          selected={note.id === selectedId}
+          onClick={() => onSelect(note)}
+        >
+          {note.title || <em style={{ color: '#bbb' }}>Sem título</em>}
+        </ListItem>
+      ))}
+    </List>
+  );
+};
 
 export default NoteList;

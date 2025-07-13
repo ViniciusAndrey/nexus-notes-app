@@ -19,6 +19,17 @@ const Toolbar = styled.div`
   display: flex;
   gap: 0.5rem;
   margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+  
+  @media (max-width: 768px) {
+    gap: 0.3rem;
+    margin-bottom: 0.3rem;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 0.2rem;
+    margin-bottom: 0.2rem;
+  }
 `;
 
 const Button = styled.button<{ active?: boolean }>`
@@ -29,6 +40,97 @@ const Button = styled.button<{ active?: boolean }>`
   padding: 0.3rem 0.6rem;
   cursor: pointer;
   font-weight: bold;
+  font-size: 0.9rem;
+  
+  @media (max-width: 768px) {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.85rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.8rem;
+  }
+`;
+
+const EditableContainer = styled.div`
+  flex: 1;
+  background: transparent;
+  color: #ffffff;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  outline: none;
+  resize: none;
+  font-family: 'Roboto', 'Open Sans', Arial, sans-serif;
+  
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  
+  /* Estilos para elementos do editor */
+  h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 1rem 0 0.5rem 0;
+    
+    @media (max-width: 768px) {
+      font-size: 1.6rem;
+      margin: 0.8rem 0 0.4rem 0;
+    }
+    
+    @media (max-width: 480px) {
+      font-size: 1.4rem;
+      margin: 0.6rem 0 0.3rem 0;
+    }
+  }
+  
+  p {
+    margin: 0.5rem 0;
+    
+    @media (max-width: 768px) {
+      margin: 0.4rem 0;
+    }
+    
+    @media (max-width: 480px) {
+      margin: 0.3rem 0;
+    }
+  }
+  
+  ul {
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+    
+    @media (max-width: 768px) {
+      margin: 0.4rem 0;
+      padding-left: 1.2rem;
+    }
+    
+    @media (max-width: 480px) {
+      margin: 0.3rem 0;
+      padding-left: 1rem;
+    }
+  }
+  
+  li {
+    margin: 0.2rem 0;
+    
+    @media (max-width: 768px) {
+      margin: 0.15rem 0;
+    }
+    
+    @media (max-width: 480px) {
+      margin: 0.1rem 0;
+    }
+  }
 `;
 
 interface RichTextEditorProps {
@@ -65,27 +167,27 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({ value, onChange }) => {
         <BlockButton format="heading" icon="H1" />
         <BlockButton format="bulleted-list" icon="• List" />
       </Toolbar>
-      <Editable
-        renderElement={renderElement}
-        renderLeaf={renderLeaf}
-        placeholder="Escreva sua anotação..."
-        spellCheck
-        autoFocus
-        onFocus={() => (value[0] as any)?.children?.[0]?.text || ''}
-        style={{
-          flex: 1,
-          background: 'transparent',
-          color: '#ffffff',
-          border: 'none',
-          borderRadius: 0,
-          padding: 0,
-          fontSize: '1.1rem',
-          lineHeight: 1.8,
-          outline: 'none',
-          resize: 'none',
-          fontFamily: 'Roboto, Open Sans, Arial, sans-serif',
-        }}
-      />
+      <EditableContainer>
+        <Editable
+          renderElement={renderElement}
+          renderLeaf={renderLeaf}
+          placeholder="Escreva sua anotação..."
+          spellCheck
+          autoFocus
+          onFocus={() => (value[0] as any)?.children?.[0]?.text || ''}
+          style={{
+            background: 'transparent',
+            color: '#ffffff',
+            border: 'none',
+            borderRadius: 0,
+            padding: 0,
+            outline: 'none',
+            resize: 'none',
+            fontFamily: 'Roboto, Open Sans, Arial, sans-serif',
+            minHeight: '200px',
+          }}
+        />
+      </EditableContainer>
     </Slate>
   );
 };

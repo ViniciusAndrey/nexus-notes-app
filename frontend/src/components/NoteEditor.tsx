@@ -15,6 +15,14 @@ const Container = styled.div`
   flex-direction: column;
   height: 100%;
   gap: 2rem;
+  
+  @media (max-width: 768px) {
+    gap: 1.5rem;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 1rem;
+  }
 `;
 
 const TitleInput = styled.input`
@@ -27,9 +35,18 @@ const TitleInput = styled.input`
   font-weight: 700;
   padding: 0;
   margin: 0;
+  
   &::placeholder {
     color: #666666;
     font-weight: 400;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1.5rem;
   }
 `;
 
@@ -44,6 +61,17 @@ const ButtonRow = styled.div`
   gap: 1rem;
   margin-top: auto;
   padding-top: 2rem;
+  
+  @media (max-width: 768px) {
+    gap: 0.8rem;
+    padding-top: 1.5rem;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 0.6rem;
+    padding-top: 1rem;
+    flex-direction: column;
+  }
 `;
 
 const SaveButton = styled.button`
@@ -68,6 +96,17 @@ const SaveButton = styled.button`
   
   &:active {
     transform: translateY(0);
+  }
+  
+  @media (max-width: 768px) {
+    padding: 0.7rem 1.2rem;
+    font-size: 0.9rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+    justify-content: center;
   }
 `;
 
@@ -94,10 +133,29 @@ const DeleteButton = styled.button`
   &:active {
     transform: translateY(0);
   }
+  
+  @media (max-width: 768px) {
+    padding: 0.7rem 1.2rem;
+    font-size: 0.9rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+    justify-content: center;
+  }
 `;
 
 const ButtonIcon = styled.span`
   font-size: 1.1rem;
+  
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.9rem;
+  }
 `;
 
 const isValidSlateContent = (content: any): content is Descendant[] => {
