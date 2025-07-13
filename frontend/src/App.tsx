@@ -4,16 +4,12 @@ import GlobalStyle from './theme/GlobalStyle';
 import { darkTheme } from './theme/dark';
 import NoteEditor from './components/NoteEditor';
 import NoteList from './components/NoteList';
+import Login from './components/Login';
+import Register from './components/Register';
 import { Descendant } from 'slate';
 import { initialValue as richInitialValue } from './components/RichTextEditor';
-import { getNotes, createNote, updateNote, deleteNote as apiDeleteNote } from './api/notes';
-
-interface Note {
-  id: string;
-  title: string;
-  content: Descendant[]; // era string
-  updatedAt: number;
-}
+import { getNotes, createNote, updateNote, deleteNote as apiDeleteNote, Note } from './api/notes';
+import { isAuthenticated, logout, getProfile, User } from './api/auth';
 
 const Layout = styled.div`
   min-height: 100vh;
@@ -47,7 +43,42 @@ const SidebarTop = styled.div`
 const SidebarBottom = styled.div`
   margin-top: auto;
   display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const UserInfo = styled.div`
+  padding: 1rem;
+  background: #1a1a1a;
+  border-radius: 4px;
+  border: 1px solid #404040;
+`;
+
+const UserName = styled.div`
+  color: #ffffff;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+`;
+
+const UserEmail = styled.div`
+  color: #b0b0b0;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+`;
+
+const LogoutButton = styled.button`
+  background: #dc3545;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background: #c82333;
+  }
 `;
 
 const IconButton = styled.button`
@@ -86,27 +117,66 @@ const NewNoteButton = styled.button`
   cursor: pointer;
 `;
 
-const initialNotes: Note[] = [
-  {
-    id: crypto.randomUUID(),
-    title: 'Minha primeira nota',
-    content: JSON.parse(JSON.stringify(richInitialValue)),
-    updatedAt: Date.now(),
-  },
-];
+type AuthView = 'login' | 'register';
 
 const App: React.FC = () => {
-  const [notes, setNotes] = useState<Note[]>(initialNotes);
+  const [notes, setNotes] = useState<Note[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [authenticated, setAuthenticated] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [authView, setAuthView] = useState<AuthView>('login');
 
   useEffect(() => {
-    getNotes().then(data => {
+    checkAuth();
+  }, []);
+
+  const checkAuth = async () => {
+    if (isAuthenticated()) {
+      try {
+        const profile = await getProfile();
+        setUser(profile.user);
+        setAuthenticated(true);
+        loadNotes();
+      } catch (error) {
+        console.error('Erro ao verificar autenticação:', error);
+        handleLogout();
+      }
+    } else {
+      setLoading(false);
+    }
+  };
+
+  const loadNotes = async () => {
+    try {
+      const data = await getNotes();
       setNotes(data.map(n => ({ ...n, updatedAt: n.updatedAt ?? Date.now() })));
       setSelectedId(data.length > 0 ? data[0].id : null);
+    } catch (error) {
+      console.error('Erro ao carregar notas:', error);
+    } finally {
       setLoading(false);
-    });
-  }, []);
+    }
+  };
+
+  const handleLogin = () => {
+    setAuthenticated(true);
+    checkAuth();
+  };
+
+  const handleRegister = () => {
+    setAuthenticated(true);
+    checkAuth();
+  };
+
+  const handleLogout = () => {
+    logout();
+    setAuthenticated(false);
+    setUser(null);
+    setNotes([]);
+    setSelectedId(null);
+    setLoading(false);
+  };
 
   const selectedNote = notes.find(n => n.id === selectedId);
 
@@ -149,7 +219,6 @@ const App: React.FC = () => {
       });
     } catch (error) {
       console.error('Erro ao deletar nota:', error);
-      // Aqui você pode adicionar uma notificação de erro para o usuário
     }
   };
 
@@ -164,7 +233,46 @@ const App: React.FC = () => {
   };
 
   // Ordenar notas por data de atualização (recentes primeiro)
-  const orderedNotes = [...notes].sort((a, b) => b.updatedAt - a.updatedAt);
+  const orderedNotes = [...notes].sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+
+  // Se não está autenticado, mostrar tela de login/registro
+  if (!authenticated) {
+    return (
+      <ThemeProvider theme={darkTheme}>
+        <GlobalStyle theme={darkTheme} />
+        {authView === 'login' ? (
+          <Login 
+            onLogin={handleLogin} 
+            onSwitchToRegister={() => setAuthView('register')} 
+          />
+        ) : (
+          <Register 
+            onRegister={handleRegister} 
+            onSwitchToLogin={() => setAuthView('login')} 
+          />
+        )}
+      </ThemeProvider>
+    );
+  }
+
+  // Se está carregando, mostrar loading
+  if (loading) {
+    return (
+      <ThemeProvider theme={darkTheme}>
+        <GlobalStyle theme={darkTheme} />
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          height: '100vh',
+          background: '#1a1a1a',
+          color: '#ffffff'
+        }}>
+          Carregando...
+        </div>
+      </ThemeProvider>
+    );
+  }
 
   return (
     <ThemeProvider theme={darkTheme}>
@@ -175,6 +283,15 @@ const App: React.FC = () => {
             <NewNoteButton onClick={handleNew}>+ Nova Nota</NewNoteButton>
             <NoteList notes={orderedNotes} onSelect={handleSelect} selectedId={selectedId ?? undefined} />
           </SidebarTop>
+          <SidebarBottom>
+            {user && (
+              <UserInfo>
+                <UserName>{user.name}</UserName>
+                <UserEmail>{user.email}</UserEmail>
+                <LogoutButton onClick={handleLogout}>Sair</LogoutButton>
+              </UserInfo>
+            )}
+          </SidebarBottom>
         </Sidebar>
         <EditorContainer>
           <NoteEditor

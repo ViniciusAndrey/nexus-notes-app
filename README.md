@@ -1,113 +1,115 @@
-# Nexus - Aplicativo de Notas
+# Nexus - Sistema de Anotações
 
-Um aplicativo de notas moderno e minimalista com editor de texto rico (WYSIWYG), desenvolvido com React, TypeScript e Node.js.
+Um micro SaaS de anotações com autenticação completa e isolamento de dados por usuário.
 
-## 🚀 Tecnologias
+## 🚀 Funcionalidades
 
-### Frontend
-- **React 19** - Biblioteca para interfaces de usuário
-- **TypeScript** - Tipagem estática
-- **Styled Components** - Estilização CSS-in-JS
-- **Slate.js** - Editor de texto rico
-- **Axios** - Cliente HTTP
+- ✅ **Autenticação Completa**: Registro e login de usuários
+- ✅ **Isolamento de Dados**: Cada usuário vê apenas suas próprias notas
+- ✅ **Editor Rico**: Interface moderna para criar e editar notas
+- ✅ **Interface Responsiva**: Design adaptável para diferentes dispositivos
+- ✅ **Tema Escuro**: Interface elegante com tema escuro
+- ✅ **Persistência**: Dados salvos no MongoDB
+- ✅ **Segurança**: Senhas hasheadas e tokens JWT
+
+## 🛠️ Tecnologias
 
 ### Backend
-- **Node.js** - Runtime JavaScript
-- **Express.js** - Framework web
-- **TypeScript** - Tipagem estática
-- **UUID** - Geração de IDs únicos
+- **Node.js** com TypeScript
+- **Express.js** para API REST
+- **MongoDB** com Mongoose
+- **JWT** para autenticação
+- **bcrypt** para hash de senhas
 
-## 📁 Estrutura do Projeto
+### Frontend
+- **React** com TypeScript
+- **Styled Components** para estilização
+- **Slate.js** para editor de texto rico
 
-```
-Nexus/
-├── frontend/          # Aplicação React
-│   ├── src/
-│   │   ├── components/    # Componentes React
-│   │   ├── api/          # Serviços de API
-│   │   ├── theme/        # Configurações de tema
-│   │   └── App.tsx       # Componente principal
-│   └── package.json
-├── backend/           # Servidor Node.js
-│   ├── src/
-│   │   ├── notes/        # Rotas e controladores de notas
-│   │   └── index.ts      # Servidor principal
-│   └── package.json
-└── README.md
-```
-
-## 🛠️ Como Executar
+## 📦 Instalação
 
 ### Pré-requisitos
 - Node.js (versão 16 ou superior)
-- npm ou yarn
+- MongoDB (local ou Atlas)
 
-### Backend
+### 1. Clone o repositório
+```bash
+git clone <url-do-repositorio>
+cd Nexus
+```
+
+### 2. Configure o Backend
 ```bash
 cd backend
 npm install
-npm start
 ```
-O servidor estará rodando em `http://localhost:3001`
 
-### Frontend
+Crie um arquivo `.env` na pasta `backend` com:
+```env
+PORT=3001
+MONGODB_URI=mongodb://localhost:27017/nexus
+FRONTEND_URL=http://localhost:3000
+JWT_SECRET=sua_chave_secreta_muito_segura_aqui
+```
+
+### 3. Configure o Frontend
+```bash
+cd ../frontend
+npm install
+```
+
+### 4. Execute o Projeto
+
+**Backend:**
+```bash
+cd backend
+npm run dev
+```
+
+**Frontend:**
 ```bash
 cd frontend
-npm install
 npm start
 ```
-A aplicação estará rodando em `http://localhost:3000`
 
-## ✨ Funcionalidades
+## 🔐 Segurança Implementada
 
-- **Editor de Texto Rico**: Suporte a negrito, itálico, sublinhado, listas e títulos
-- **Interface Minimalista**: Design clean e focado na produtividade
-- **Persistência de Dados**: Notas salvas no backend
-- **Navegação Intuitiva**: Barra lateral com lista de notas
-- **Responsivo**: Interface adaptável a diferentes tamanhos de tela
+### Problema Resolvido
+- **Antes**: Todas as notas eram compartilhadas globalmente
+- **Depois**: Cada usuário tem acesso apenas às suas próprias notas
 
-## 🎨 Design
+### Medidas de Segurança
+- ✅ Autenticação JWT obrigatória
+- ✅ Senhas hasheadas com bcrypt
+- ✅ Validação de dados de entrada
+- ✅ Isolamento completo de dados por usuário
+- ✅ Tokens com expiração automática
+- ✅ Middleware de autenticação em todas as rotas protegidas
 
-O projeto segue princípios de design minimalista:
-- Paleta de cores neutras e suaves
-- Tipografia limpa e legível
-- Espaçamento generoso
-- Ícones simples e intuitivos
-- Foco na usabilidade
+## 📱 Como Usar
 
-## 📝 API Endpoints
-
-- `GET /notes` - Listar todas as notas
-- `POST /notes` - Criar nova nota
-- `PUT /notes/:id` - Atualizar nota existente
-- `DELETE /notes/:id` - Excluir nota
+1. **Registre-se** ou **faça login** na aplicação
+2. **Crie notas** usando o botão "+ Nova Nota"
+3. **Edite** suas notas no editor rico
+4. **Organize** suas notas na sidebar
+5. **Suas notas são privadas** - apenas você pode vê-las
 
 ## 🚀 Deploy
 
-Este projeto está configurado para deploy gratuito em várias plataformas:
+### Backend
+- Configure as variáveis de ambiente para produção
+- Use um MongoDB Atlas ou servidor MongoDB
+- Altere a `JWT_SECRET` para uma chave segura
+- Configure CORS para o domínio do frontend
 
-### Opções Recomendadas:
-- **Vercel + MongoDB Atlas** (Mais fácil e gratuito)
-- **Netlify + Railway** (Alternativa robusta)
-- **Render** (Tudo em um lugar)
-
-### Deploy Rápido:
-```bash
-# Executar script de preparação
-chmod +x deploy.sh
-./deploy.sh
-```
-
-📖 **Guia completo**: Consulte o arquivo `DEPLOY.md` para instruções detalhadas.
-
-## 🤝 Contribuição
-
-1. Faça um fork do projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
+### Frontend
+- Configure a variável `REACT_APP_API_URL` para a URL do backend
+- Build para produção: `npm run build`
 
 ## 📄 Licença
 
-Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes. 
+Este projeto está sob a licença MIT.
+
+## 🤝 Contribuição
+
+Contribuições são bem-vindas! Por favor, abra uma issue ou pull request. 

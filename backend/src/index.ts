@@ -3,6 +3,7 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import notesRoutes from './notes/notes.routes';
+import usersRoutes from './users/users.routes';
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.get('/', (req, res) => {
 });
 
 // Rotas
+app.use('/users', usersRoutes);
 app.use('/notes', notesRoutes);
 
 // Rota de health check

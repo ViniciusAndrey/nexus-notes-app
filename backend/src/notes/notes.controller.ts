@@ -3,7 +3,8 @@ import { Note } from './notes.model';
 
 export const getNotes = async (req: Request, res: Response) => {
   try {
-    const notes = await Note.find().sort({ updatedAt: -1 });
+    // Filtrar notas apenas do usuário autenticado
+    const notes = await Note.find({ userId: req.user._id }).sort({ updatedAt: -1 });
     const simpleNotes = notes.map(({ _id, title, content }) => ({ 
       id: (_id as any).toString(), 
       title, 
@@ -25,7 +26,8 @@ export const createNote = async (req: Request, res: Response) => {
     
     const newNote = new Note({
       title: validTitle,
-      content
+      content,
+      userId: req.user._id // Associar nota ao usuário autenticado
     });
     const savedNote = await newNote.save();
     
@@ -45,8 +47,9 @@ export const updateNote = async (req: Request, res: Response) => {
     const { id } = req.params;
     const { title, content } = req.body;
     
-    const note = await Note.findByIdAndUpdate(
-      id,
+    // Verificar se a nota pertence ao usuário autenticado
+    const note = await Note.findOneAndUpdate(
+      { _id: id, userId: req.user._id },
       { title, content },
       { new: true, runValidators: true }
     );
@@ -69,7 +72,9 @@ export const updateNote = async (req: Request, res: Response) => {
 export const deleteNote = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const note = await Note.findByIdAndDelete(id);
+    
+    // Verificar se a nota pertence ao usuário autenticado
+    const note = await Note.findOneAndDelete({ _id: id, userId: req.user._id });
     
     if (!note) {
       return res.status(404).json({ message: 'Nota não encontrada' });
