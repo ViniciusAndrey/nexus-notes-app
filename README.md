@@ -82,6 +82,24 @@ O projeto segue princípios de design minimalista:
 - `PUT /notes/:id` - Atualizar nota existente
 - `DELETE /notes/:id` - Excluir nota
 
+## 🚀 Deploy
+
+Este projeto está configurado para deploy gratuito em várias plataformas:
+
+### Opções Recomendadas:
+- **Vercel + MongoDB Atlas** (Mais fácil e gratuito)
+- **Netlify + Railway** (Alternativa robusta)
+- **Render** (Tudo em um lugar)
+
+### Deploy Rápido:
+```bash
+# Executar script de preparação
+chmod +x deploy.sh
+./deploy.sh
+```
+
+📖 **Guia completo**: Consulte o arquivo `DEPLOY.md` para instruções detalhadas.
+
 ## 🤝 Contribuição
 
 1. Faça um fork do projeto

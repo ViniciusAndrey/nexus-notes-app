@@ -1,28 +1,49 @@
-import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 import notesRoutes from './notes/notes.routes';
-import connectDB from '../config/database';
+
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Conectar ao MongoDB
-connectDB();
+// Configuração CORS para produção
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  credentials: true
+}));
 
-// Middleware
-app.use(cors());
 app.use(express.json());
 
 // Rotas
 app.use('/notes', notesRoutes);
 
-// Rota de teste
-app.get('/', (req, res) => {
-  res.json({ message: 'Nexus API está funcionando!' });
+// Rota de health check
+app.get('/health', (req, res) => {
+  res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor rodando na porta ${PORT}`);
-  console.log(`📝 API disponível em http://localhost:${PORT}`);
-});
+// Conectar ao MongoDB
+const connectDB = async () => {
+  try {
+    const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/nexus';
+    await mongoose.connect(mongoURI);
+    console.log('✅ Conectado ao MongoDB');
+  } catch (error) {
+    console.error('❌ Erro ao conectar ao MongoDB:', error);
+    process.exit(1);
+  }
+};
+
+// Iniciar servidor
+const startServer = async () => {
+  await connectDB();
+  app.listen(PORT, () => {
+    console.log(`🚀 Servidor rodando na porta ${PORT}`);
+    console.log(`📱 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
+  });
+};
+
+startServer();
