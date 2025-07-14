@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+import { buildApiUrl, fetchWithTimeout } from '../config/api';
 
 export interface User {
   id: string;
@@ -53,10 +53,10 @@ export const getAuthHeaders = () => {
 };
 
 export const login = async (data: LoginData): Promise<AuthResponse> => {
-  const url = `${API_BASE_URL}/users/login`;
+  const url = buildApiUrl('/users/login');
 
   try {
-    const response = await fetch(url, {
+    const response = await fetchWithTimeout(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -88,10 +88,10 @@ export const login = async (data: LoginData): Promise<AuthResponse> => {
 };
 
 export const register = async (data: RegisterData): Promise<AuthResponse> => {
-  const url = `${API_BASE_URL}/users/register`;
+  const url = buildApiUrl('/users/register');
 
   try {
-    const response = await fetch(url, {
+    const response = await fetchWithTimeout(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -127,10 +127,10 @@ export const logout = () => {
 };
 
 export const getProfile = async (): Promise<{ user: User }> => {
-  const url = `${API_BASE_URL}/users/profile`;
+  const url = buildApiUrl('/users/profile');
 
   try {
-    const response = await fetch(url, {
+    const response = await fetchWithTimeout(url, {
       headers: getAuthHeaders(),
     });
 

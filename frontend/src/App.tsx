@@ -6,6 +6,7 @@ import NoteEditor from './components/NoteEditor';
 import NoteList from './components/NoteList';
 import Login from './components/Login';
 import Register from './components/Register';
+import ApiDebugger from './components/ApiDebugger';
 import { Descendant } from 'slate';
 import { initialValue as richInitialValue } from './components/RichTextEditor';
 import { getNotes, createNote, updateNote, deleteNote as apiDeleteNote, Note } from './api/notes';
@@ -389,9 +390,23 @@ const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [authView, setAuthView] = useState<AuthView>('login');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showDebugger, setShowDebugger] = useState(false);
 
   useEffect(() => {
     checkAuth();
+    
+    // Adicionar listener para mostrar/ocultar debugger
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+        setShowDebugger(prev => !prev);
+      }
+    };
+    
+    document.addEventListener('keydown', handleKeyDown);
+    
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   }, []);
 
   const checkAuth = async () => {
@@ -550,6 +565,8 @@ const App: React.FC = () => {
     <ThemeProvider theme={darkTheme}>
       <GlobalStyle theme={darkTheme} />
       <Layout>
+        {/* Debugger - pressione Ctrl+Shift+D para mostrar/ocultar */}
+        <ApiDebugger isVisible={showDebugger} />
         {/* Header Mobile */}
         <MobileHeader>
           <MobileMenuButton onClick={() => setSidebarOpen(!sidebarOpen)}>
