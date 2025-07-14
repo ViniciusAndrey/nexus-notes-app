@@ -4,6 +4,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  avatar?: string;
 }
 
 export interface AuthResponse {
@@ -142,6 +143,41 @@ export const getProfile = async (): Promise<{ user: User }> => {
     return result;
   } catch (error) {
     console.error('❌ Erro ao buscar perfil:', error);
+    throw error;
+  }
+}; 
+
+export const googleLogin = async (idToken: string): Promise<AuthResponse> => {
+  const url = buildApiUrl('/users/google-login');
+
+  try {
+    const response = await fetchWithTimeout(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ idToken }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      
+      let errorMessage = 'Erro no login com Google';
+      try {
+        const errorJson = JSON.parse(errorText);
+        errorMessage = errorJson.message || errorMessage;
+      } catch (e) {
+        console.error('❌ Erro ao parsear JSON:', e);
+      }
+      
+      throw new Error(errorMessage);
+    }
+
+    const result = await response.json();
+    saveToken(result.token);
+    return result;
+  } catch (error) {
+    console.error('❌ Erro no login com Google:', error);
     throw error;
   }
 }; 

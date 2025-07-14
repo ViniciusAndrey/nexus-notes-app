@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { login, LoginData } from '../api/auth';
+import { GoogleLogin } from '@react-oauth/google';
+import { login, LoginData, googleLogin } from '../api/auth';
 
 interface LoginProps {
   onLogin: () => void;
@@ -235,6 +236,41 @@ const SwitchLink = styled.span`
   }
 `;
 
+const Divider = styled.div`
+  display: flex;
+  align-items: center;
+  margin: 1.5rem 0;
+  color: #b0b0b0;
+  font-size: 0.9rem;
+  
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #404040;
+  }
+  
+  &::before {
+    margin-right: 1rem;
+  }
+  
+  &::after {
+    margin-left: 1rem;
+  }
+  
+  @media (max-width: 480px) {
+    margin: 1.2rem 0;
+    font-size: 0.85rem;
+  }
+`;
+
+const GoogleButton = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+`;
+
 const Login: React.FC<LoginProps> = ({ onLogin, onSwitchToRegister }) => {
   const [formData, setFormData] = useState<LoginData>({
     email: '',
@@ -248,28 +284,56 @@ const Login: React.FC<LoginProps> = ({ onLogin, onSwitchToRegister }) => {
       ...formData,
       [e.target.name]: e.target.value
     });
-    setError(''); // Limpar erro quando o usuário digita
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError('');
+    setLoading(true);
 
     try {
       await login(formData);
       onLogin();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro no login');
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Erro no login');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    try {
+      await googleLogin(credentialResponse.credential);
+      onLogin();
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Erro no login com Google');
+    }
+  };
+
+  const handleGoogleError = () => {
+    setError('Erro no login com Google');
   };
 
   return (
     <LoginContainer>
       <LoginCard>
         <Title>Entrar no Nexus</Title>
+        
+        <GoogleButton>
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={handleGoogleError}
+            useOneTap
+            theme="filled_black"
+            size="large"
+            text="signin_with"
+            shape="rectangular"
+            locale="pt-BR"
+          />
+        </GoogleButton>
+
+        <Divider>ou</Divider>
+
         <Form onSubmit={handleSubmit}>
           <FormGroup>
             <Label htmlFor="email">Email</Label>
@@ -279,10 +343,11 @@ const Login: React.FC<LoginProps> = ({ onLogin, onSwitchToRegister }) => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="seu@email.com"
+              placeholder="Seu email"
               required
             />
           </FormGroup>
+
           <FormGroup>
             <Label htmlFor="password">Senha</Label>
             <Input
@@ -295,15 +360,18 @@ const Login: React.FC<LoginProps> = ({ onLogin, onSwitchToRegister }) => {
               required
             />
           </FormGroup>
+
           <Button type="submit" disabled={loading}>
             {loading ? 'Entrando...' : 'Entrar'}
           </Button>
         </Form>
+
         {error && <ErrorMessage>{error}</ErrorMessage>}
+
         <SwitchText>
           Não tem uma conta?{' '}
           <SwitchLink onClick={onSwitchToRegister}>
-            Criar conta
+            Registre-se
           </SwitchLink>
         </SwitchText>
       </LoginCard>

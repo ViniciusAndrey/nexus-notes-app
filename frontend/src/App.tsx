@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import GlobalStyle from './theme/GlobalStyle';
 import { darkTheme } from './theme/dark';
 import NoteEditor from './components/NoteEditor';
@@ -525,101 +526,107 @@ const App: React.FC = () => {
   // Se não está autenticado, mostrar tela de login/registro
   if (!authenticated) {
     return (
-      <ThemeProvider theme={darkTheme}>
-        <GlobalStyle theme={darkTheme} />
-        {authView === 'login' ? (
-          <Login 
-            onLogin={handleLogin} 
-            onSwitchToRegister={() => setAuthView('register')} 
-          />
-        ) : (
-          <Register 
-            onRegister={handleRegister} 
-            onSwitchToLogin={() => setAuthView('login')} 
-          />
-        )}
-      </ThemeProvider>
+      <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID || ''}>
+        <ThemeProvider theme={darkTheme}>
+          <GlobalStyle theme={darkTheme} />
+          {authView === 'login' ? (
+            <Login 
+              onLogin={handleLogin} 
+              onSwitchToRegister={() => setAuthView('register')} 
+            />
+          ) : (
+            <Register 
+              onRegister={handleRegister} 
+              onSwitchToLogin={() => setAuthView('login')} 
+            />
+          )}
+        </ThemeProvider>
+      </GoogleOAuthProvider>
     );
   }
 
   // Se está carregando, mostrar loading
   if (loading) {
     return (
-      <ThemeProvider theme={darkTheme}>
-        <GlobalStyle theme={darkTheme} />
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center', 
-          height: '100vh',
-          background: '#1a1a1a',
-          color: '#ffffff'
-        }}>
-          Carregando...
-        </div>
-      </ThemeProvider>
+      <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID || ''}>
+        <ThemeProvider theme={darkTheme}>
+          <GlobalStyle theme={darkTheme} />
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            height: '100vh',
+            background: '#1a1a1a',
+            color: '#ffffff'
+          }}>
+            Carregando...
+          </div>
+        </ThemeProvider>
+      </GoogleOAuthProvider>
     );
   }
 
   return (
-    <ThemeProvider theme={darkTheme}>
-      <GlobalStyle theme={darkTheme} />
-      <Layout>
-        {/* Debugger - pressione Ctrl+Shift+D para mostrar/ocultar */}
-        <ApiDebugger isVisible={showDebugger} />
-        {/* Header Mobile */}
-        <MobileHeader>
-          <MobileMenuButton onClick={() => setSidebarOpen(!sidebarOpen)}>
-            ☰
-          </MobileMenuButton>
-          <MobileTitle>Nexus</MobileTitle>
-          <MobileNewNoteButton onClick={handleNew}>
-            + Nova
-          </MobileNewNoteButton>
-        </MobileHeader>
+    <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID || ''}>
+      <ThemeProvider theme={darkTheme}>
+        <GlobalStyle theme={darkTheme} />
+        <Layout>
+          {/* Debugger - pressione Ctrl+Shift+D para mostrar/ocultar */}
+          <ApiDebugger isVisible={showDebugger} />
+          {/* Header Mobile */}
+          <MobileHeader>
+            <MobileMenuButton onClick={() => setSidebarOpen(!sidebarOpen)}>
+              ☰
+            </MobileMenuButton>
+            <MobileTitle>Nexus</MobileTitle>
+            <MobileNewNoteButton onClick={handleNew}>
+              + Nova
+            </MobileNewNoteButton>
+          </MobileHeader>
 
-        {/* Overlay para fechar sidebar no mobile */}
-        <Overlay isOpen={sidebarOpen} onClick={() => setSidebarOpen(false)} />
+          {/* Overlay para fechar sidebar no mobile */}
+          <Overlay isOpen={sidebarOpen} onClick={() => setSidebarOpen(false)} />
 
-        {/* Sidebar */}
-        <Sidebar isOpen={sidebarOpen}>
-          <SidebarTop>
-            <NewNoteButton onClick={handleNew}>+ Nova Nota</NewNoteButton>
-            <NoteList notes={orderedNotes} onSelect={handleSelect} selectedId={selectedId ?? undefined} />
-          </SidebarTop>
-          <SidebarBottom>
-            {user && (
-              <UserInfo>
-                <UserName>{user.name}</UserName>
-                <UserEmail>{user.email}</UserEmail>
-                <LogoutButton onClick={handleLogout}>Sair</LogoutButton>
-              </UserInfo>
+          {/* Sidebar */}
+          <Sidebar isOpen={sidebarOpen}>
+            <SidebarTop>
+              <NewNoteButton onClick={handleNew}>+ Nova Nota</NewNoteButton>
+              <NoteList notes={orderedNotes} onSelect={handleSelect} selectedId={selectedId ?? undefined} />
+            </SidebarTop>
+            <SidebarBottom>
+              {user && (
+                <UserInfo>
+                  <UserName>{user.name}</UserName>
+                  <UserEmail>{user.email}</UserEmail>
+                  <LogoutButton onClick={handleLogout}>Sair</LogoutButton>
+                </UserInfo>
+              )}
+            </SidebarBottom>
+          </Sidebar>
+
+          {/* Editor */}
+          <EditorContainer>
+            {selectedNote ? (
+              <NoteEditor
+                note={selectedNote}
+                onSave={handleSave}
+                onDelete={handleDelete}
+              />
+            ) : (
+              <EmptyState>
+                <EmptyStateTitle>Bem-vindo ao Nexus!</EmptyStateTitle>
+                <EmptyStateText>
+                  Crie sua primeira nota para começar a organizar suas ideias.
+                </EmptyStateText>
+                <NewNoteButton onClick={handleNew}>
+                  + Criar Primeira Nota
+                </NewNoteButton>
+              </EmptyState>
             )}
-          </SidebarBottom>
-        </Sidebar>
-
-        {/* Editor */}
-        <EditorContainer>
-          {selectedNote ? (
-            <NoteEditor
-              note={selectedNote}
-              onSave={handleSave}
-              onDelete={handleDelete}
-            />
-          ) : (
-            <EmptyState>
-              <EmptyStateTitle>Bem-vindo ao Nexus!</EmptyStateTitle>
-              <EmptyStateText>
-                Crie sua primeira nota para começar a organizar suas ideias.
-              </EmptyStateText>
-              <NewNoteButton onClick={handleNew}>
-                + Criar Primeira Nota
-              </NewNoteButton>
-            </EmptyState>
-          )}
-        </EditorContainer>
-      </Layout>
-    </ThemeProvider>
+          </EditorContainer>
+        </Layout>
+      </ThemeProvider>
+    </GoogleOAuthProvider>
   );
 };
 

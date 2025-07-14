@@ -4,7 +4,9 @@ import bcrypt from 'bcryptjs';
 export interface IUser extends Document {
   name: string;
   email: string;
-  password: string;
+  password?: string;
+  googleId?: string;
+  avatar?: string;
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -27,16 +29,27 @@ const UserSchema = new Schema<IUser>({
   },
   password: {
     type: String,
-    required: [true, 'Senha é obrigatória'],
+    required: function() {
+      return !this.googleId; // Senha é obrigatória apenas se não for login com Google
+    },
     minlength: [6, 'Senha deve ter pelo menos 6 caracteres']
+  },
+  googleId: {
+    type: String,
+    unique: true,
+    sparse: true // Permite múltiplos documentos com valor null/undefined
+  },
+  avatar: {
+    type: String,
+    default: null
   }
 }, {
   timestamps: true
 });
 
-// Hash da senha antes de salvar
+// Hash da senha antes de salvar (apenas se a senha foi modificada e existe)
 UserSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
+  if (!this.isModified('password') || !this.password) return next();
   
   try {
     const salt = await bcrypt.genSalt(10);
@@ -47,8 +60,9 @@ UserSchema.pre('save', async function(next) {
   }
 });
 
-// Método para comparar senhas
+// Método para comparar senhas (apenas se a senha existe)
 UserSchema.methods.comparePassword = async function(candidatePassword: string): Promise<boolean> {
+  if (!this.password) return false;
   return bcrypt.compare(candidatePassword, this.password);
 };
 
